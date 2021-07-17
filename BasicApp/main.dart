@@ -1,46 +1,100 @@
 import 'package:flutter/material.dart';
 
+import './quiz.dart';
+import './result.dart';
+
 void main() {
-  runApp(MyApp());                            //runApp is the funtion in the material package of flutter which initiates the running of application.
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {         //we have to extend either stateful or statless widget to any class used in flutter
-  void answers() {
-    print('Answers');
+class MyApp extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _MyAppState(); //it returns the state
+    throw UnimplementedError();
+  }
+}
+
+class _MyAppState extends State<MyApp> {
+  //<MyApp> says that this state belongs to my app class
+  static const _Questions = [
+    //this is now List of Maps.
+    {
+      'QuestionText': 'What is your favourite Colour ? ',
+      'AnswerText': [
+        {'text': 'Blue', 'score': 1},
+        {'text': 'Yellow', 'score': 2},
+        {'text': 'Green', 'score': 3},
+        {'text': 'Red', 'score': 4}
+      ]
+    },
+    {
+      'QuestionText': 'What is your favourite animal ?',
+      'AnswerText': [
+        {'text': 'Dog', 'score': 1},
+        {'text': 'Cat', 'score': 2},
+        {'text': 'Racoon', 'score': 3},
+        {'text': 'Rabbit', 'score': 4}
+      ]
+    },
+    {
+      'QuestionText': 'What is you favourite cusine ?',
+      'AnswerText': [
+        {'text': 'Indian', 'score': 1},
+        {'text': 'Chinese', 'score': 2},
+        {'text': 'Mexican', 'score': 3},
+        {'text': 'Thai', 'score': 4}
+      ]
+    },
+    {
+      'QuestionText': 'What is your favourite season ?',
+      'AnswerText': [
+        {'text': 'Spring', 'score': 1},
+        {'text': 'Winter', 'score': 2},
+        {'text': 'Monsoon', 'score': 3},
+        {'text': 'Summer', 'score': 4}
+      ]
+    },
+  ];
+
+  var _Questionindex = 0;
+  int _totalScore = 0;
+  void Restart() {
+    setState(() {
+      _Questionindex = 0;
+      _totalScore = 0;
+    });
+  }
+
+  void answers(int score) {
+    _totalScore += score;
+
+    setState(() {
+      //used to change the state of the UI
+      print(_Questions[_Questionindex]['AnswerText']);
+      if (_Questionindex < _Questions.length) _Questionindex += 1;
+      //else
+      //_Questionindex = 0;
+    });
+
+    print('Answer');
   }
 
   @override
   Widget build(BuildContext context) {
-    var Questions = [
-      'What is Your Fav Colour ? ',
-      'What is your favourite animal?'
-    ];
-
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(                       //appbar is the head of the app which normally contains the heading 
+        appBar: AppBar(
           title: Text('Hello User'),
         ),
-        body: Column(
-          children: [
-            Text('The Questions are here'),
-            RaisedButton(                   //raider button is a type of button which can be pressed
-              child: Text('Answer 1'),
-              onPressed: answers,           //onPressed takes a method as an input. Note- when passing the method you have to pass it
-            ),                              // without paranthesis. therfore the method answers is without paranthesis.
-            RaisedButton(
-              child: Text('Answer 2'),
-              onPressed: () => print('Answer 2'),    //This is another way to pass a single lined method
-            ),
-            RaisedButton(
-              child: Text('Answer 3'),
-              onPressed: answers,
-            )
-          ],
-        ),
+        body: _Questionindex < _Questions.length
+            ? Quiz(
+                answerQuestions: answers,
+                questions: _Questions,
+                index: _Questionindex)
+            : Result(_totalScore, Restart),
       ),
     );
-
-    throw UnimplementedError();
   }
 }
